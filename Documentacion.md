@@ -13,7 +13,7 @@ El objetivo es explorar y diseñar estos algoritmos para familiarizarnos con su 
 
 ## Peg Solitaire
 
-### 🔹 Representación del Tablero
+###  Representación del Tablero
 
 - El tablero se modela como una **matriz** donde:
 
@@ -30,7 +30,7 @@ El objetivo es explorar y diseñar estos algoritmos para familiarizarnos con su 
 
 Esta abstracción permite cambiar fácilmente entre distintas configuraciones iniciales (tablero inglés, europeo, o personalizados) através de 3 metodos estaticos que modifican la matriz de la instancia ya sea Inglesa(default), o según su tipo (0 y 1) en el constructor de la clase Board. Una instancia de Board con parámetro 0 dará resultado a una matriz de juego 7x5, mientras que una instancia creada con parámetro 1 generará una partida con tablero 9x9.
 
-### 🔹 Algoritmo A\*
+###  Algoritmo A\*
 
 #### Descripción
 
@@ -53,9 +53,7 @@ La heurística diseñada combina:
 2. **Factor estructural:** penalización por fichas aisladas.
 3. **Factor geométrico:** distancia Manhattan de las fichas al centro.
 
-> La parte base es admisible, mientras que los factores adicionales hacen la búsqueda más informativa aunque no siempre estrictamente óptima.
-
-### 🔹 Decisiones de diseño
+###  Decisiones de diseño
 
 1. **Uso de matrices con `-1,0,1`:**  
    Más simple para imprimir y validar movimientos que una lista de posiciones, aunque de cara al usuarios tengan representaciones grafiacas más de acorde al juego.
@@ -66,7 +64,7 @@ La heurística diseñada combina:
 3. **Heap de prioridad (`heapq`):**  
    Garantiza eficiencia en la selección de nodos con menor `f = g+h`, cosa que no pasaría con una lista o con una cola normal.
 
-### 🔹 Discusion de Resultados
+###  Discusion de Resultados
 
 #### Pruebas realizadas en Peg Solitaire
 
@@ -106,31 +104,36 @@ Los experimentos realizados muestran diferencias claras en el desempeño del alg
 
 ---
 
-## 🔹 Algoritmo Min-Max
+##  Algoritmo Min-Max
 
 ### Descripción
 
-- Modela el juego como un escenario de decisión donde el **jugador** intenta reducir fichas, y un **oponente** puede escoger movimientos que compliquen la resolución.
-- Implementación clásica de **Min-Max** con profundidad limitada:
-  - Nodo MAX → selecciona el movimiento más prometedor.
-  - Nodo MIN → selecciona el movimiento más adverso.
+- Modela el juego como un escenario de decisión donde el **jugador** intenta completar la mayor cantidad de boxes llegando a ser el último que coloque una línea para que complete el box, y un **oponente** puede escoger movimientos que compliquen la resolución o así mismo que busque el gane completando los boxes.
+- Implementación clásica de **Min-Max**:
+  - Nodo MAX → selecciona el movimiento más prometedor para el jugador.
+  - Nodo MIN → selecciona el movimiento más prometedor para la computado.
+
+- Se crea una clase con los diferentes estados del tablero, por lo que en cada momento que se pase un tablero con un movimiento realizado por el algoritmo se creará una clase y se le pasará como parámetro al algoritmo para que lo siga desarrolando, lo que permite que el juego principal nunca se llegue a modificar, esto proque los argumentos en python se pasan por referencia y no por valor.
 
 ### Heurística de evaluación
 
----
+Como heurística se implementó el score de cada jugador de la partida, es decir, la cantidad de boxes completados, en caso de que la computadora obtenga 4 boxes, se le colocará como score -4, esto para que pueda obtener un valor mínimo con base en el algoritmo. En caso de que el algoritmo note que el jugador obtenga 4 boxes se le dará como score un 4 positivo.
 
-## 🔹 Desafíos encontrados
+##  Desafíos encontrados
 
-- **Generalización del objetivo:** inicialmente estaba fijo en `(3,3)`; se adaptó para que funcione con distintas dimensiones y huecos iniciales.
-- **Heurísticas informativas:** diseñar heurísticas más fuertes sin perder admisibilidad fue un reto.
+- **Generalización del objetivo:** inicialmente estaba fijo en `(2,2)`; se adaptó para que funcione con distintas dimensiones.
+- **Heurísticas informativas:** diseñar heurísticas más fuertes sin perder la eficiencia fue un reto.
 - **Escalabilidad en Min-Max:** el árbol crece exponencialmente; se consideró limitar profundidad o aplicar poda alfa-beta.
-- **Equilibrio entre rendimiento y claridad:** clonar tableros es más limpio, pero cuesta en memoria.
+- **Equilibrio entre rendimiento y claridad:** clonar tableros es más limpio, pero cuesta en memoria, así como realizar copias profundas, sin embargo se utilizó para que no hubiera problemas de sobreescribir en los datos de las clases anteriores.
 
 ---
 
-## 🔹 Conclusiones
+##  Conclusiones
 
 - Se implementaron con éxito **A\*** y **Min-Max** aplicados a Peg Solitaire y Lines and Boxes.
-- El proyecto permitió estudiar tanto un enfoque de **búsqueda informada** como de **juego adversarial**.
+- El proyecto permitió estudiar tanto un enfoque de búsqueda informada como de juego adversarial.
+- Se logró modelar e implementar el juego como un árbol de decisión, evaluando un score para cada jugador, según corresponda
+- La implementación del algoritmo Min-Max permitió que se llegara a la conclusión de que entre mas profundidad de el árbol las decisiones son mas precisas, sin embargo, el poder computacional que requiere es inmenso, además, que se logró notar la diferencia entre el algoritmo con poda y sin poda alfa-beta.
+- El principal desafío fue la explosión exponencial del árbol de juego, lo que hace necesaria la poda alfa-beta
 
 ---
